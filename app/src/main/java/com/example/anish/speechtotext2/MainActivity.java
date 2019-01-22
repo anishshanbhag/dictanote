@@ -15,7 +15,6 @@ import android.webkit.JavascriptInterface;
 import android.webkit.WebView;
 import android.widget.ImageButton;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import java.util.ArrayList;
 
@@ -69,15 +68,10 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                         {
                             l.run();
                         }
-
                         public void onTick(long paramAnonymousLong)
                         {
-
                         }
                     };
-
-
-
         }
         public void onReadyForSpeech(Bundle params)
         {
@@ -114,13 +108,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             String str = new String();
             Log.d(TAG, "onResults " + results);
             data = results.getStringArrayList(SpeechRecognizer.RESULTS_RECOGNITION);
-//            for (int i = 0; i < data.size(); i++)
-//            {
-//                Log.d(TAG, "result " + data.get(i));
-//                str += data.get(i);
-//            }
-            str+=data.get(0);
-
         }
         public void onPartialResults(Bundle partialResults)
         {
@@ -129,16 +116,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         public void onEvent(int eventType, Bundle params)
         {
             Log.d(TAG, "onEvent " + eventType);
-        }
-
-        private void a(){
-
-        }
-
-        private void h(){
-            if(q!=null){
-                q.cancel();
-            }
         }
     }
 
@@ -151,12 +128,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
             intent.putExtra(RecognizerIntent.EXTRA_MAX_RESULTS,1);
             if(timerRunning){
-                Context context = getApplicationContext();
-                CharSequence text = "Hello toast!";
-                int duration = Toast.LENGTH_SHORT;
-
-                Toast toast = Toast.makeText(context, text, duration);
-                toast.show();
                 sr.stopListening();
                 q.cancel();
                 timerRunning = false;
@@ -167,35 +138,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
             }
 
-
-//            Log.i("111111","11111111");
-//            l.run();
-
-//            MainActivity.b x = new MainActivity.b(90L,90L);
-
-
-
-
         }
     }
-
-    class b extends CountDownTimer
-    {
-
-        public b(long millisInFuture, long countDownInterval) {
-            super(millisInFuture, countDownInterval);
-            l.run();
-        }
-
-        @Override
-        public void onTick(long l) {}
-
-        @Override
-        public void onFinish() {
-
-        }
-    }
-
     class c implements Runnable {
 
         Context a;
