@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html>
+<head>
+
+</head>
+<body>
+<form name="myForm">
+	<input type="text" id="anish" size="60">
+</form>	
+<script type="text/javascript">
+	document.getElementById('anish').style.height = "200px";
+	var temp;
+	function calc(){
+		 c = Android.showToast();
+		if(temp!=c){
+			document.getElementById('anish').value += (c+" ");
+			temp = c;
+		}
+
+	}
+	setInterval(calc,5000);
+</script>
+</body>
+</html>
