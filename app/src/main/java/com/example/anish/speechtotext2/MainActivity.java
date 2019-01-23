@@ -62,7 +62,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             y = getApplicationContext();
             l = new c(y,this);
 
-                    q = new CountDownTimer(2000L, 100L)
+                    q = new CountDownTimer(1000L, 100L)
                     {
                         public void onFinish()
                         {
