@@ -1,13 +1,17 @@
 package com.example.anish.speechtotext2;
 
+import android.Manifest;
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.media.AudioManager;
 import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.speech.RecognitionListener;
 import android.speech.RecognizerIntent;
 import android.speech.SpeechRecognizer;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
@@ -15,6 +19,7 @@ import android.webkit.JavascriptInterface;
 import android.webkit.WebView;
 import android.widget.ImageButton;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.util.ArrayList;
 
@@ -28,29 +33,60 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private Intent intent;
     CountDownTimer q;
     private boolean timerRunning = false;
-     c l;
+    private final int MY_PERMISSIONS_RECORD_AUDIO = 1;
+    c l;
 
     private AudioManager mAudioManager;
     private int mStreamVolume = 0;
+    boolean isPlay = false;
+
 
 
     @Override
-    public void onCreate(Bundle savedInstanceState)
-    {
+    public void onCreate(Bundle savedInstanceState) {
+        int r;
+
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        ImageButton speakButton = (ImageButton) findViewById(R.id.imageButton4);
-        mText = (TextView) findViewById(R.id.textView);
-        speakButton.setOnClickListener(this);
-        mAudioManager = (AudioManager) getSystemService(Context.AUDIO_SERVICE);
-        mStreamVolume = mAudioManager.getStreamVolume(AudioManager.STREAM_MUSIC);
-        mAudioManager.setStreamVolume(AudioManager.STREAM_MUSIC, 0, 0);
-        ourBrow = (WebView)findViewById(R.id.webView1);
-        ourBrow.getSettings().setJavaScriptEnabled(true);
-        ourBrow.loadUrl("file:///android_asset/anish.html");
-        ourBrow.addJavascriptInterface(new WebAppInterface(this), "Android");
-        sr = SpeechRecognizer.createSpeechRecognizer(this);
-        sr.setRecognitionListener(new listener());
+        if (ContextCompat.checkSelfPermission(this,
+                Manifest.permission.RECORD_AUDIO)
+                != PackageManager.PERMISSION_GRANTED) {
+
+            //When permission is not granted by user, show them message why this permission is needed.
+            if (ActivityCompat.shouldShowRequestPermissionRationale(this,
+                    Manifest.permission.RECORD_AUDIO)) {
+                Toast.makeText(this, "Please grant permissions to record audio", Toast.LENGTH_LONG).show();
+
+                //Give user option to still opt-in the permissions
+                ActivityCompat.requestPermissions(this,
+                        new String[]{Manifest.permission.RECORD_AUDIO},
+                        MY_PERMISSIONS_RECORD_AUDIO);
+
+            } else {
+                // Show user dialog to grant permission to record audio
+                ActivityCompat.requestPermissions(this,
+                        new String[]{Manifest.permission.RECORD_AUDIO},
+                        MY_PERMISSIONS_RECORD_AUDIO);
+            }
+        }
+            ImageButton speakButton = (ImageButton) findViewById(R.id.imageButton4);
+
+            mText = (TextView) findViewById(R.id.textView);
+            speakButton.setOnClickListener(this);
+            r = R.drawable.mic;
+            speakButton.setBackgroundResource(r);
+            isPlay = true;
+            mAudioManager = (AudioManager) getSystemService(Context.AUDIO_SERVICE);
+            mStreamVolume = mAudioManager.getStreamVolume(AudioManager.STREAM_MUSIC);
+            mAudioManager.setStreamVolume(AudioManager.STREAM_MUSIC, 0, 0);
+            ourBrow = (WebView) findViewById(R.id.webView1);
+            ourBrow.getSettings().setJavaScriptEnabled(true);
+            ourBrow.loadUrl("file:///android_asset/anish.html");
+            ourBrow.addJavascriptInterface(new WebAppInterface(this), "Android");
+            sr = SpeechRecognizer.createSpeechRecognizer(this);
+            sr.setRecognitionListener(new listener());
+
+
 
     }
 
@@ -120,6 +156,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     }
 
     public void onClick(View v) {
+        int rsd;
         if (v.getId() == R.id.imageButton4)
         {
             this.intent= new Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH);
@@ -135,9 +172,16 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             else{
                 timerRunning = true;
                 sr.startListening(intent);
-
             }
-
+            if(isPlay){
+                rsd = R.drawable.pause;
+                v.setBackgroundResource(rsd);
+            }
+            else{
+                rsd = R.drawable.mic;
+                v.setBackgroundResource(rsd);
+            }
+            isPlay = !isPlay;
         }
     }
     class c implements Runnable {
