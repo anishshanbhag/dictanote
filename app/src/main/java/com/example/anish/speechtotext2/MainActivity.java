@@ -45,49 +45,67 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     @Override
     public void onCreate(Bundle savedInstanceState) {
         int r;
+        Context s;
 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        sr = SpeechRecognizer.createSpeechRecognizer(this);
+        sr.setRecognitionListener(new listener());
         if (ContextCompat.checkSelfPermission(this,
                 Manifest.permission.RECORD_AUDIO)
                 != PackageManager.PERMISSION_GRANTED) {
 
-            //When permission is not granted by user, show them message why this permission is needed.
             if (ActivityCompat.shouldShowRequestPermissionRationale(this,
                     Manifest.permission.RECORD_AUDIO)) {
                 Toast.makeText(this, "Please grant permissions to record audio", Toast.LENGTH_LONG).show();
 
-                //Give user option to still opt-in the permissions
                 ActivityCompat.requestPermissions(this,
                         new String[]{Manifest.permission.RECORD_AUDIO},
                         MY_PERMISSIONS_RECORD_AUDIO);
 
             } else {
-                // Show user dialog to grant permission to record audio
                 ActivityCompat.requestPermissions(this,
                         new String[]{Manifest.permission.RECORD_AUDIO},
                         MY_PERMISSIONS_RECORD_AUDIO);
             }
         }
-            ImageButton speakButton = (ImageButton) findViewById(R.id.imageButton4);
+        s = getApplicationContext();
 
-            mText = (TextView) findViewById(R.id.textView);
-            speakButton.setOnClickListener(this);
-            r = R.drawable.mic;
-            speakButton.setBackgroundResource(r);
-            isPlay = true;
-            mAudioManager = (AudioManager) getSystemService(Context.AUDIO_SERVICE);
-            mStreamVolume = mAudioManager.getStreamVolume(AudioManager.STREAM_MUSIC);
-            mAudioManager.setStreamVolume(AudioManager.STREAM_MUSIC, 0, 0);
-            ourBrow = (WebView) findViewById(R.id.webView1);
-            ourBrow.getSettings().setJavaScriptEnabled(true);
-            ourBrow.loadUrl("file:///android_asset/anish.html");
-            ourBrow.addJavascriptInterface(new WebAppInterface(this), "Android");
-            sr = SpeechRecognizer.createSpeechRecognizer(this);
-            sr.setRecognitionListener(new listener());
+        boolean isInstalled = isPackageInstalled("com.google.android.googlequicksearchbox", s.getPackageManager());
+
+        if(!isInstalled){
+            openDialog();
+        }
+        ImageButton speakButton = (ImageButton) findViewById(R.id.imageButton4);
+
+        mText = (TextView) findViewById(R.id.textView);
+        speakButton.setOnClickListener(this);
+        r = R.drawable.mic;
+        speakButton.setBackgroundResource(r);
+        isPlay = true;
+        mAudioManager = (AudioManager) getSystemService(Context.AUDIO_SERVICE);
+        mStreamVolume = mAudioManager.getStreamVolume(AudioManager.STREAM_MUSIC);
+        mAudioManager.setStreamVolume(AudioManager.STREAM_MUSIC, 0, 0);
+        ourBrow = (WebView) findViewById(R.id.webView1);
+        ourBrow.getSettings().setJavaScriptEnabled(true);
+        ourBrow.loadUrl("file:///android_asset/anish.html");
+        ourBrow.addJavascriptInterface(new WebAppInterface(this), "Android");
 
 
+    }
 
+    private void openDialog() {
+        ExampleDialog dialog = new ExampleDialog();
+        dialog.show(getSupportFragmentManager(),"Example Dialog");
+    }
+
+    public static boolean isPackageInstalled(String packageName, PackageManager packageManager) {
+        try {
+            return packageManager.getApplicationInfo(packageName, 0).enabled;
+        }
+        catch (PackageManager.NameNotFoundException e) {
+            return false;
+        }
     }
 
     class listener implements RecognitionListener
